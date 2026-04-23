@@ -1,0 +1,41 @@
+{
+  "name": "@ayanuali/solana-web3js-v1-to-v2",
+  "version": "1.0.0",
+  "description": "Automated codemod for migrating @solana/web3.js v1 to v2 (Solana Kit)",
+  "author": "Ayan Uali <ayanuali@gmail.com>",
+  "license": "MIT",
+  "keywords": [
+    "solana",
+    "web3",
+    "web3.js",
+    "codemod",
+    "migration",
+    "blockchain",
+    "solana-kit",
+    "jssg",
+    "ast-grep"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ayanuali/solana-web3js-v1-to-v2"
+  },
+  "bugs": {
+    "url": "https://github.com/ayanuali/solana-web3js-v1-to-v2/issues"
+  },
+  "homepage": "https://github.com/ayanuali/solana-web3js-v1-to-v2#readme",
+  "scripts": {
+    "test": "echo 'Run: npx codemod jssg test -l tsx ./scripts/codemod.ts'",
+    "publish-codemod": "npx codemod publish"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.3.0",
+    "prettier": "^3.1.0"
+  },
+  "peerDependencies": {
+    "codemod": "^1.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

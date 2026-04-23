@@ -1,0 +1,72 @@
+version: "1"
+nodes:
+  - id: migrate-solana-web3js
+    name: Migrate @solana/web3.js v1 to v2
+    type: automatic
+    steps:
+      # Step 1: Deterministic AST transform (handles 80-90% of cases)
+      - name: "Transform Solana web3.js v1 API calls to v2"
+        js-ast-grep:
+          js_file: "scripts/codemod.ts"
+          language: "tsx"
+          include:
+            - "**/*.ts"
+            - "**/*.tsx"
+            - "**/*.js"
+            - "**/*.jsx"
+          exclude:
+            - "**/*.test.ts"
+            - "**/*.test.tsx"
+            - "**/*.test.js"
+            - "**/*.spec.ts"
+            - "**/*.spec.tsx"
+            - "node_modules/**"
+            - "dist/**"
+            - "build/**"
+            - ".next/**"
+
+      # Step 2: AI fixups for complex patterns (handles remaining ~10-20%)
+      - name: "AI fixups for complex migration patterns"
+        ai:
+          prompt: |
+            You are performing a @solana/web3.js v1 → v2 migration.
+
+            Fix any remaining uses of deprecated v1 APIs that weren't caught by the AST transform.
+
+            Key v2 changes to apply:
+            1. **Keypair** → **generateKeyPairSigner()** or **createKeyPairSignerFromBytes()**
+            2. **PublicKey** → **address()** function
+            3. **Connection** → **createSolanaRpc()** and **createSolanaRpcSubscriptions()**
+            4. **connection.method()** → **rpc.method().send()** (add .send() chain)
+            5. **Number amounts** → **BigInt** (e.g., 1000000 → 1000000n or lamports(1n))
+            6. **Transaction creation** → Use pipe() with helpers like:
+               - setTransactionMessageFeePayer()
+               - setTransactionMessageLifetimeUsingBlockhash()
+               - appendTransactionMessageInstruction()
+            7. **Factory patterns** for reusable functions like sendAndConfirmTransactionFactory()
+            8. **Type updates**:
+               - Keypair → KeyPairSigner
+               - PublicKey → Address
+               - Connection → ReturnType<typeof createSolanaRpc>
+            9. **Import path updates** from @solana/web3.js monolith to modular packages:
+               - @solana/accounts
+               - @solana/rpc
+               - @solana/signers
+               - @solana/transactions
+               - @solana/addresses
+
+            Important rules:
+            - Only edit TypeScript/JavaScript code
+            - Do not change comments or test files
+            - Preserve code logic and functionality
+            - Add async/await where needed (v2 uses more async patterns)
+            - Ensure type safety is maintained
+            - Do NOT change package.json
+          model: "gpt-4o"
+
+      # Step 3: Format with Prettier
+      - name: "Format with Prettier"
+        run: |
+          if [ -f "package.json" ]; then
+            npx prettier --write "**/*.{ts,tsx,js,jsx}" --ignore-path .gitignore --log-level warn || true
+          fi

@@ -1,0 +1,21 @@
+schema_version: "1.0"
+name: "solana-web3js-v1-to-v2"
+version: "1.0.0"
+description: "Automates migration from @solana/web3.js v1 to v2 (now @solana/kit). Handles Keypair→KeyPairSigner, PublicKey→Address, Connection→RPC, and more. Achieves 80-90% automation with deterministic AST transforms + AI fixups."
+author: "Ayan Uali <ayanuali@gmail.com>"
+license: "MIT"
+workflow: "workflow.yaml"
+targets:
+  languages: ["tsx", "typescript", "javascript"]
+keywords:
+  - "solana"
+  - "web3"
+  - "web3.js"
+  - "blockchain"
+  - "migration"
+  - "codemod"
+  - "solana-kit"
+registry:
+  access: "public"
+  visibility: "public"
+capabilities: []
