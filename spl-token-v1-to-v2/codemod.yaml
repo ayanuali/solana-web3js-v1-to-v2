@@ -1,0 +1,19 @@
+schema_version: "1.0"
+name: "spl-token-v1-to-v2"
+version: "1.0.0"
+description: "Migrates @solana/spl-token from v0.1.x (Token class) to v0.2+ (standalone functions)"
+author: "Ayan Uali <ayanuali@gmail.com>"
+license: "MIT"
+workflow: "workflow.yaml"
+targets:
+  languages: ["tsx", "typescript", "javascript"]
+keywords:
+  - "solana"
+  - "spl-token"
+  - "token"
+  - "migration"
+  - "codemod"
+registry:
+  access: "public"
+  visibility: "public"
+capabilities: []

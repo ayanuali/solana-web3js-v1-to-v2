@@ -1,0 +1,67 @@
+version: "1"
+nodes:
+  - id: migrate-metaplex-to-umi
+    name: Migrate @metaplex-foundation/js to Umi
+    type: automatic
+    steps:
+      # Step 1: Deterministic AST transform (handles 80-90% of cases)
+      - name: "Transform Metaplex JS API calls to Umi"
+        js-ast-grep:
+          js_file: "scripts/codemod.ts"
+          language: "tsx"
+          include:
+            - "**/*.ts"
+            - "**/*.tsx"
+            - "**/*.js"
+            - "**/*.jsx"
+          exclude:
+            - "**/*.test.ts"
+            - "**/*.test.tsx"
+            - "**/*.test.js"
+            - "**/*.spec.ts"
+            - "**/*.spec.tsx"
+            - "node_modules/**"
+            - "dist/**"
+            - "build/**"
+            - ".next/**"
+
+      # Step 2: AI fixups for complex patterns (handles remaining ~10-20%)
+      - name: "AI fixups for complex migration patterns"
+        ai:
+          prompt: |
+            You are performing a @metaplex-foundation/js → Umi migration.
+
+            Fix any remaining uses of deprecated Metaplex JS APIs that weren't caught by the AST transform.
+
+            Key Umi changes to apply:
+            1. **Metaplex.make()** → **createUmi()** from @metaplex-foundation/umi-bundle-defaults
+            2. **metaplex.nfts().findByMint()** → **fetchDigitalAsset(umi, mint)**
+            3. **metaplex.nfts().create()** → **createNft(umi, {...}).sendAndConfirm(umi)**
+            4. **metaplex.nfts().update()** → **updateV1(umi, {...}).sendAndConfirm(umi)**
+            5. **metaplex.nfts().uploadMetadata()** → **umi.uploader.uploadJson(metadata)**
+            6. **new PublicKey()** → **publicKey()** from @metaplex-foundation/umi
+            7. **Plugin registration**: Add .use(mplTokenMetadata()) after createUmi()
+            8. **Type updates**:
+               - Metaplex → Umi
+               - PublicKey → PublicKey (from umi)
+               - Signer → KeypairSigner or Signer (from umi)
+            9. **Import path updates**:
+               - @metaplex-foundation/js → @metaplex-foundation/umi-bundle-defaults
+               - Add @metaplex-foundation/mpl-token-metadata for NFT operations
+               - Add @metaplex-foundation/umi for types and utilities
+
+            Important rules:
+            - Only edit TypeScript/JavaScript code
+            - Do not change comments or test files
+            - Preserve code logic and functionality
+            - Add async/await where needed (Umi uses async patterns)
+            - Ensure type safety is maintained
+            - Do NOT change package.json
+          model: "gpt-4o"
+
+      # Step 3: Format with Prettier
+      - name: "Format with Prettier"
+        run: |
+          if [ -f "package.json" ]; then
+            npx prettier --write "**/*.{ts,tsx,js,jsx}" --ignore-path .gitignore --log-level warn || true
+          fi

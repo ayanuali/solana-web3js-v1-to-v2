@@ -1,0 +1,66 @@
+version: "1"
+nodes:
+  - id: migrate-spl-token
+    name: Migrate @solana/spl-token v0.1.x to v0.2+
+    type: automatic
+    steps:
+      # Step 1: Deterministic AST transform (handles Token class → standalone functions)
+      - name: "Transform SPL Token v0.1.x API calls to v0.2+"
+        js-ast-grep:
+          js_file: "scripts/codemod.ts"
+          language: "tsx"
+          include:
+            - "**/*.ts"
+            - "**/*.tsx"
+            - "**/*.js"
+            - "**/*.jsx"
+          exclude:
+            - "**/*.test.ts"
+            - "**/*.test.tsx"
+            - "**/*.test.js"
+            - "**/*.spec.ts"
+            - "**/*.spec.tsx"
+            - "node_modules/**"
+            - "dist/**"
+            - "build/**"
+            - ".next/**"
+
+      # Step 2: AI fixups for complex patterns
+      - name: "AI fixups for complex migration patterns"
+        ai:
+          prompt: |
+            You are performing a @solana/spl-token v0.1.x → v0.2+ migration.
+
+            Fix any remaining uses of deprecated v0.1.x APIs that were not caught by the AST transform.
+
+            Key v0.2+ changes to apply:
+            1. **Token class removal**: Replace all `new Token(connection, mint, TOKEN_PROGRAM_ID, payer)` instantiations with standalone function calls
+            2. **Static methods**: `Token.createMint()` → `createMint()`
+            3. **Instance methods** → **Standalone functions**:
+               - `token.createAccount(owner)` → `createAccount(connection, payer, mint, owner)`
+               - `token.transfer(source, dest, owner, [], amount)` → `transfer(connection, payer, source, dest, owner, amount)`
+               - `token.mintTo(dest, authority, [], amount)` → `mintTo(connection, payer, mint, dest, authority, amount)`
+               - `token.burn(account, owner, [], amount)` → `burn(connection, payer, account, mint, owner, amount)`
+               - `token.approve(account, delegate, owner, [], amount)` → `approve(connection, payer, account, delegate, owner, amount)`
+               - `token.revoke(account, owner, [])` → `revoke(connection, payer, account, owner)`
+               - `token.getAccountInfo(account)` → `getAccount(connection, account)`
+               - `token.getMintInfo()` → `getMint(connection, mint)`
+               - `token.createAssociatedTokenAccount(owner)` → `createAssociatedTokenAccount(connection, payer, mint, owner)`
+            4. **Associated token addresses**: `Token.getAssociatedTokenAddress(...)` → `getAssociatedTokenAddress(mint, owner)`
+            5. **Import updates**: Add specific function imports, remove `Token` class from imports
+            6. **Remove empty signer arrays**: The `[]` parameter (for multi-signers) is removed in most v0.2+ functions
+
+            Important rules:
+            - Only edit TypeScript/JavaScript code
+            - Do not change comments or test files
+            - Preserve code logic and functionality
+            - Ensure connection and payer variables are available in scope
+            - Do NOT change package.json
+          model: "gpt-4o"
+
+      # Step 3: Format with Prettier
+      - name: "Format with Prettier"
+        run: |
+          if [ -f "package.json" ]; then
+            npx prettier --write "**/*.{ts,tsx,js,jsx}" --ignore-path .gitignore --log-level warn || true
+          fi

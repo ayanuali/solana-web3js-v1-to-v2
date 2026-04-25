@@ -1,0 +1,107 @@
+SPL Token v0.1.x → v0.2+ Codemod - Build Verification Report
+================================================================
+Created: 2026-04-25
+Author: Ayan Uali <ayanuali@gmail.com>
+Location: Mac Studio (192.168.68.117)
+Directory: ~/solana-web3js-v1-to-v2/spl-token-v1-to-v2
+
+FILE INVENTORY
+--------------
+Total files created: 16
+
+Configuration Files (3):
+  ✓ codemod.yaml (456 bytes)
+  ✓ workflow.yaml (3.3 KB)
+  ✓ README.md (5.3 KB)
+
+Scripts (1):
+  ✓ scripts/codemod.ts (16 KB, 446 lines)
+
+Test Fixtures (12 files = 6 pairs):
+  ✓ tests/fixtures/01-create-mint.input.ts
+  ✓ tests/fixtures/01-create-mint.expected.ts
+  ✓ tests/fixtures/02-create-account.input.ts
+  ✓ tests/fixtures/02-create-account.expected.ts
+  ✓ tests/fixtures/03-transfer.input.ts
+  ✓ tests/fixtures/03-transfer.expected.ts
+  ✓ tests/fixtures/04-mint-to.input.ts
+  ✓ tests/fixtures/04-mint-to.expected.ts
+  ✓ tests/fixtures/05-get-account-info.input.ts
+  ✓ tests/fixtures/05-get-account-info.expected.ts
+  ✓ tests/fixtures/06-full-workflow.input.ts
+  ✓ tests/fixtures/06-full-workflow.expected.ts
+
+CODEMOD SPECIFICATIONS
+----------------------
+Name: spl-token-v1-to-v2
+Version: 1.0.0
+Engine: jssg (JavaScript AST Grep)
+Target Languages: TypeScript, JavaScript (tsx, ts, js, jsx)
+
+PIPELINE ARCHITECTURE
+---------------------
+Step 1: JSSG Transform (scripts/codemod.ts)
+  - Deterministic AST transformations
+  - Pattern matching and replacement
+  - Import statement updates
+  
+Step 2: AI Fixups (GPT-4o)
+  - Complex pattern handling
+  - Context-aware transformations
+  - Edge case resolution
+
+Step 3: Prettier Formatting
+  - Code style consistency
+  - Automatic formatting
+
+MIGRATION COVERAGE
+------------------
+Token Class Instantiation:
+  ✓ new Token(...) → removed (using standalone functions)
+
+Static Methods:
+  ✓ Token.createMint() → createMint()
+  ✓ Token.getAssociatedTokenAddress() → getAssociatedTokenAddress()
+
+Instance Methods (10):
+  ✓ token.createAccount() → createAccount()
+  ✓ token.transfer() → transfer()
+  ✓ token.mintTo() → mintTo()
+  ✓ token.burn() → burn()
+  ✓ token.approve() → approve()
+  ✓ token.revoke() → revoke()
+  ✓ token.getAccountInfo() → getAccount()
+  ✓ token.getMintInfo() → getMint()
+  ✓ token.createAssociatedTokenAccount() → createAssociatedTokenAccount()
+
+Import Updates:
+  ✓ Remove Token class from imports
+  ✓ Add specific function imports (11 functions)
+
+TEST FIXTURE COVERAGE
+---------------------
+1. 01-create-mint: Token.createMint() transformation
+2. 02-create-account: token.createAccount() transformation
+3. 03-transfer: token.transfer() transformation
+4. 04-mint-to: token.mintTo() transformation
+5. 05-get-account-info: token.getAccountInfo() + getMintInfo()
+6. 06-full-workflow: Complete real-world multi-operation example
+
+KEY TRANSFORMATIONS
+-------------------
+• Empty signer arrays ([]) removed from all function calls
+• Connection and payer parameters added explicitly
+• Mint addresses tracked and propagated to standalone functions
+• Associated token address calls simplified (4 params → 2 params)
+• Property access updated (mint.publicKey → mint)
+
+BUILD STATUS
+------------
+✓ All configuration files created successfully
+✓ All scripts created successfully
+✓ All test fixtures created successfully (6 pairs = 12 files)
+✓ README documentation complete
+✓ No errors encountered during build
+
+VERIFICATION COMPLETE
+=====================

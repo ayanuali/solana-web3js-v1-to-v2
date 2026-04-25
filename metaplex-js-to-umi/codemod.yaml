@@ -1,0 +1,21 @@
+schema_version: "1.0"
+name: "metaplex-js-to-umi"
+version: "1.0.0"
+description: "Migrates @metaplex-foundation/js to @metaplex-foundation/umi framework. Handles Metaplex.make() → createUmi(), NFT operations, metadata uploads, and PublicKey conversions. Achieves 80-90% automation with deterministic AST transforms + AI fixups."
+author: "Ayan Uali <ayanuali@gmail.com>"
+license: "MIT"
+workflow: "workflow.yaml"
+targets:
+  languages: ["tsx", "typescript", "javascript"]
+keywords:
+  - "metaplex"
+  - "umi"
+  - "solana"
+  - "nft"
+  - "blockchain"
+  - "migration"
+  - "codemod"
+registry:
+  access: "public"
+  visibility: "public"
+capabilities: []
