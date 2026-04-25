@@ -182,7 +182,7 @@ const codemod: Codemod<TSX> = async (root) => {
 
         let isAlreadyDotSend = false;
         if (grandparent && grandparent.kind() === "member_expression") {
-          const gp Property = grandparent.field("property");
+          const gpProperty = grandparent.field("property");
           if (gpProperty && gpProperty.text() === "send") {
             isAlreadyDotSend = true;
           }
